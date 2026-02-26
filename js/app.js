@@ -70,6 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeUI();
     renderProducts(filterProducts());
     setupEventListeners();
+
+    // Hide page loader after content is ready
+    const loader = document.getElementById('pageLoader');
+    if (loader) {
+        loader.classList.add('hidden');
+    }
 });
 
 // Initialize UI elements
