@@ -7,26 +7,36 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Header / Navigation -->
+    <div id="loader" class="loader-overlay">
+        <div class="spinner">⚽</div>
+        <h2>Načítám dresy...</h2>
+    </div>
+
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <h1 class="logo">⚽ Football Shop</h1>
+                <h1 id="homeLogo" class="logo" title="Zpět na hlavní stránku">⚽ Football Shop</h1>
                 <div class="header-actions">
                     <div class="search-container">
                         <input type="text" id="searchInput" class="search-box" placeholder="Hledat dresy...">
                         <div id="searchDropdown" class="search-dropdown hidden"></div>
                     </div>
+                    
+                    <button id="wishlistButton" class="wishlist-header-btn">
+                        ❤️ Oblíbené <span id="wishlistCount" class="cart-count">0</span>
+                    </button>
+
                     <button id="cartButton" class="cart-button">
                         🛒 Košík <span id="cartCount" class="cart-count">0</span>
                     </button>
+                    
+                    <button id="themeToggle" class="theme-toggle" title="Přepnout vzhled">🌙</button>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Filter Section -->
-    <section class="filters-section">
+    <section id="filtersSection" class="filters-section">
         <div class="container">
             <div class="filters">
                 <div class="filter-group">
@@ -51,54 +61,194 @@
                     <label for="priceFilter">Cena (do):</label>
                     <input type="number" id="priceFilter" placeholder="Max cena" min="0">
                 </div>
-                <button id="resetFilters" class="reset-btn">Resetovat filtry</button>
+                <div class="filter-group">
+                    <label for="sortFilter">Řadit podle:</label>
+                    <select id="sortFilter">
+                        <option value="default">Výchozí doporučené</option>
+                        <option value="price-asc">Od nejlevnějšího</option>
+                        <option value="price-desc">Od nejdražšího</option>
+                        <option value="name-asc">Abecedně (A-Z)</option>
+                    </select>
+                </div>
+                <button id="resetFilters" class="reset-btn">Resetovat</button>
             </div>
         </div>
     </section>
 
-    <!-- Products Section -->
-    <main class="products-section">
+    <main id="mainSection" class="products-section">
         <div class="container">
             <h2>Naše produkty</h2>
             <div id="productsGrid" class="products-grid">
-                <!-- Products will be loaded here -->
+                </div>
+        </div>
+    </main>
+
+    <main id="wishlistPage" class="products-section hidden">
+        <div class="container">
+            <div class="page-header">
+                <h2>Seznam přání ❤️</h2>
+                <button class="back-btn" onclick="showHome()">← Zpět na produkty</button>
+            </div>
+            <div id="wishlistGrid" class="products-grid">
+                </div>
+        </div>
+    </main>
+
+    <main id="cartPage" class="products-section hidden">
+        <div class="container">
+            <div class="page-header">
+                <h2>Nákupní košík 🛒</h2>
+                <button class="back-btn" onclick="showHome()">← Pokračovat v nákupu</button>
+            </div>
+            <div class="cart-page-content">
+                <div id="cartItemsContainer" class="cart-items-list">
+                    </div>
+                <div class="cart-summary-box">
+                    <h3 style="margin-bottom: 20px; font-size: 20px;">Shrnutí košíku</h3>
+                    <div class="summary-row">
+                        <span>Hodnota zboží:</span>
+                        <span id="cartPageTotal" style="color: var(--secondary-color);">0 Kč</span>
+                    </div>
+                    <button id="cartPageCheckoutBtn" class="checkout-btn">Přejít k pokladně</button>
+                </div>
             </div>
         </div>
     </main>
 
-    <!-- Shopping Cart Modal -->
-    <div id="cartModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Nákupní košík</h2>
-                <button id="closeCart" class="close-btn">&times;</button>
+    <main id="checkoutPage" class="products-section hidden">
+        <div class="container">
+            <div class="page-header">
+                <h2>Pokladna 💳</h2>
+                <button class="back-btn" onclick="openCartPage()">← Zpět do košíku</button>
             </div>
-            <div id="cartItems" class="cart-items">
-                <!-- Cart items will be loaded here -->
-            </div>
-            <div class="cart-summary">
-                <div class="summary-row">
-                    <span>Celkem:</span>
-                    <span id="cartTotal">0 Kč</span>
-                </div>
-                <button id="checkoutBtn" class="checkout-btn">Objednat</button>
-            </div>
-        </div>
-    </div>
+            <form id="checkoutForm" class="checkout-page-content">
+                
+                <div class="checkout-details">
+                    <div class="checkout-section">
+                        <h3>1. Dodací údaje</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ch-name">Jméno a příjmení *</label>
+                                <input type="text" id="ch-name" placeholder="Jan Novák" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ch-email">E-mail *</label>
+                                <input type="email" id="ch-email" placeholder="jan.novak@email.cz" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ch-address">Ulice a číslo popisné *</label>
+                            <input type="text" id="ch-address" placeholder="Jindřišská 16" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ch-city">Město *</label>
+                                <input type="text" id="ch-city" placeholder="Praha" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ch-zip">PSČ *</label>
+                                <input type="text" id="ch-zip" placeholder="110 00" required>
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- Product Detail Modal -->
+                    <div class="checkout-section">
+                        <h3>2. Způsob dopravy</h3>
+                        <div class="radio-group">
+                            <label class="radio-card">
+                                <input type="radio" name="shipping" value="79" checked onchange="updateCheckoutTotal()">
+                                <div class="radio-content">
+                                    <span class="radio-title">📦 Zásilkovna</span>
+                                    <span class="radio-price">79 Kč</span>
+                                </div>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="shipping" value="119" onchange="updateCheckoutTotal()">
+                                <div class="radio-content">
+                                    <span class="radio-title">🚚 PPL Kurýr</span>
+                                    <span class="radio-price">119 Kč</span>
+                                </div>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="shipping" value="0" onchange="updateCheckoutTotal()">
+                                <div class="radio-content">
+                                    <span class="radio-title">🏢 Osobní odběr (Praha)</span>
+                                    <span class="radio-price">Zdarma</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="checkout-section">
+                        <h3>3. Způsob platby</h3>
+                        <div class="radio-group">
+                            <label class="radio-card">
+                                <input type="radio" name="payment" value="0" checked onchange="updateCheckoutTotal()">
+                                <div class="radio-content">
+                                    <span class="radio-title">💳 Platba kartou online</span>
+                                    <span class="radio-price">Zdarma</span>
+                                </div>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="payment" value="0" onchange="updateCheckoutTotal()">
+                                <div class="radio-content">
+                                    <span class="radio-title">🏦 Bankovní převod</span>
+                                    <span class="radio-price">Zdarma</span>
+                                </div>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="payment" value="39" onchange="updateCheckoutTotal()">
+                                <div class="radio-content">
+                                    <span class="radio-title">💵 Dobírka</span>
+                                    <span class="radio-price">+ 39 Kč</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cart-summary-box">
+                    <h3 style="margin-bottom: 20px; font-size: 20px;">Vaše objednávka</h3>
+                    
+                    <div class="summary-items" id="checkoutSummaryItems">
+                        </div>
+                    
+                    <hr class="summary-divider">
+                    
+                    <div class="summary-row summary-small">
+                        <span>Mezisoučet:</span>
+                        <span id="checkoutSubtotal">0 Kč</span>
+                    </div>
+                    <div class="summary-row summary-small">
+                        <span>Doprava a platba:</span>
+                        <span id="checkoutFees">79 Kč</span>
+                    </div>
+                    
+                    <hr class="summary-divider">
+                    
+                    <div class="summary-row">
+                        <span>Celkem k úhradě:</span>
+                        <span id="checkoutTotal" style="color: var(--secondary-color); font-size: 22px;">0 Kč</span>
+                    </div>
+                    
+                    <button type="submit" class="checkout-btn" style="margin-top: 25px;">Závazně objednat</button>
+                    <p style="font-size: 12px; color: var(--text-light); text-align: center; margin-top: 15px;">Kliknutím souhlasíte s obchodními podmínkami.</p>
+                </div>
+            </form>
+        </div>
+    </main>
+
     <div id="productModal" class="modal hidden">
-        <div class="modal-content product-modal">
+        <div class="modal-content product-modal" id="productModalContent">
             <div class="modal-header">
                 <h2 id="productTitle"></h2>
                 <button id="closeProduct" class="close-btn">&times;</button>
             </div>
 
-            <!-- Image Gallery -->
             <div class="product-detail-container">
                 <div class="gallery-section">
-                    <div class="main-gallery">
-                        <img id="mainImage" src="" alt="Product">
+                    <div class="main-gallery" id="zoomContainer">
+                        <div id="mainImage" class="emoji-image"></div>
                         <button id="prevImage" class="gallery-nav prev">❮</button>
                         <button id="nextImage" class="gallery-nav next">❯</button>
                     </div>
@@ -106,7 +256,7 @@
                         <div class="image-counter">
                             <span id="imageCounter">1 / 4</span>
                         </div>
-                        <button id="zoomImage" class="zoom-btn">🔍 Zvětšit</button>
+                        <span class="zoom-hint">🔍 Přejeďte myší pro detail</span>
                     </div>
                 </div>
 
@@ -131,25 +281,23 @@
                     <button id="addToCartDetail" class="add-to-cart-btn" style="margin-top: 20px; width: 100%;">
                         Přidat do košíku
                     </button>
+                    
+                    <button id="wishlistDetailBtn" class="wishlist-detail-btn">
+                        ♡ Přidat do oblíbených
+                    </button>
                 </div>
+
+                <div class="related-products-section">
+                    <h3>Mohlo by se vám líbit</h3>
+                    <div id="relatedProductsGrid" class="related-grid">
+                        </div>
+                </div>
+                
             </div>
         </div>
     </div>
 
-    <!-- Image Zoom Modal -->
-    <div id="zoomModal" class="modal hidden zoom-fullscreen">
-        <div class="zoom-container">
-            <button id="closeZoom" class="close-btn zoom-close">&times;</button>
-            <img id="zoomImage" src="" alt="Zvětšené">
-            <button id="zoomPrev" class="zoom-nav prev">❮</button>
-            <button id="zoomNext" class="zoom-nav next">❯</button>
-        </div>
-    </div>
-
-    <!-- Success Message -->
-    <div id="successMessage" class="success-message hidden">
-        ✓ Objednávka odeslána! Děkujeme za nákup.
-    </div>
+    <div id="toastContainer" class="toast-container"></div>
 
     <script src="js/products.js"></script>
     <script src="js/app.js"></script>
